@@ -48,7 +48,7 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
     {
         var state = Random.state;
         Random.InitState(abstractCreature.ID.RandomSeed);
-        if (Random.value < .5f && world.game?.session is not SandboxGameSession)
+        if (Random.value < .5f && world.game is RainWorldGame game && game.session is not SandboxGameSession)
         {
             if (!Jelly.TryGetValue(abstractCreature, out var props))
                 Jelly.Add(abstractCreature, props = new());
@@ -65,18 +65,23 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
         var state = Random.state;
         Random.InitState(self.abstractPhysicalObject.ID.RandomSeed);
         var rand = Random.value;
-        if (rand < .5f && self.room is Room rm && !self.slatedForDeletetion && self.abstractPhysicalObject.world.game?.session is not SandboxGameSession)
+        if (rand < .5f && self.room is Room rm && rm.world is World w && !self.slatedForDeletetion && w.game is RainWorldGame game && game.session is not SandboxGameSession && self.firstChunk is BodyChunk b)
         {
             AbstractCreature abstractMom;
-            rm.abstractRoom.AddEntity(abstractMom = new(rm.world, StaticWorld.GetCreatureTemplate(Tp1.HazerMom), null, rm.GetWorldCoordinate(self.firstChunk.pos), self.abstractPhysicalObject.ID));
-            abstractMom.RealizeInRoom();
-            var rlMom = (abstractMom.realizedObject as HazerMom)!;
-            rlMom.dead = self.dead;
-            if (self.dead)
-                rlMom.InkLeft = 0f;
-            abstractMom.superSizeMe = Random.value < .5f;
-            rlMom.firstChunk.HardSetPosition(rm.MiddleOfTile(self.firstChunk.pos));
-            self.Destroy();
+            if (rm.abstractRoom is AbstractRoom arm)
+            {
+                arm.AddEntity(abstractMom = new(w, StaticWorld.GetCreatureTemplate(Tp1.HazerMom), null, rm.GetWorldCoordinate(b.pos), self.abstractPhysicalObject.ID));
+                abstractMom.RealizeInRoom();
+                if (abstractMom.realizedObject is HazerMom hz)
+                {
+                    hz.dead = self.dead;
+                    if (self.dead)
+                        hz.InkLeft = 0f;
+                    abstractMom.superSizeMe = Random.value < .5f;
+                    hz.firstChunk?.HardSetPosition(rm.MiddleOfTile(b.pos));
+                    self.Destroy();
+                }
+            }
         }
         else if (rand < 2f / 3f && Albino.TryGetValue(self.abstractCreature, out var props))
             props.Value = true;
@@ -88,7 +93,7 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
         orig(self, abstractCreature, world);
         var state = Random.state;
         Random.InitState(abstractCreature.ID.RandomSeed);
-        if (Random.value < .5f && world.game?.session is not SandboxGameSession && Seed.TryGetValue(self.abstractCreature, out var props))
+        if (Random.value < .5f && world.game is RainWorldGame game && game.session is not SandboxGameSession && Seed.TryGetValue(abstractCreature, out var props))
         {
             props.IsSeed = true;
             props.Born = true;
