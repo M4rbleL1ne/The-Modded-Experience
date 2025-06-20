@@ -83,8 +83,8 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
                 }
             }
         }
-        else if (rand < 2f / 3f && Albino.TryGetValue(self.abstractCreature, out var props))
-            props.Value = true;
+        else if (rand < 2f / 3f && AbsProps.TryGetValue(self.abstractCreature, out var props))
+            props.Albino = true;
         Random.state = state;
     }
 
@@ -146,7 +146,12 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             if (Random.value < .5f)
                 type = Tp1.Denture;
         }
-        else if (type == Tp.TentaclePlant || type == TpSH.StowawayBug)
+        else if (type == Tp.TentaclePlant)
+        {
+            if (Random.value < .25f)
+                type = Tp1.Denture;
+        }
+        else if (type == TpSH.StowawayBug)
         {
             if (Random.value < .5f)
                 type = Tp1.Denture;
@@ -281,7 +286,7 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             rand = Random.value;
             if (rand < 1 / 3f)
                 type = Tp2.MaracaSpider;
-            else if (rand < 2 / 3f) 
+            else if (rand < 2 / 3f)
                 type = Tp1.Sporantula;
         }
         else if (type == Tp.GreenLizard || type == TpSH.SpitLizard)
@@ -425,41 +430,55 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             {
                 res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.Denture), null, res.pos, res.ID);
                 res.setCustomFlags();
-                if (Albino.TryGetValue(res, out var props))
+                if (AbsProps.TryGetValue(res, out var props))
                 {
                     var rnd = Random.value;
                     if (rnd < .25f)
                     {
                         res.superSizeMe = true;
-                        props.Value = true;
+                        props.Albino = true;
                     }
                     else if (rnd < .5f)
                     {
                         res.superSizeMe = true;
-                        props.Value = false;
+                        props.Albino = false;
                     }
                     else if (rnd < .75f)
                     {
                         res.superSizeMe = false;
-                        props.Value = true;
+                        props.Albino = true;
                     }
                     else
                     {
                         res.superSizeMe = false;
-                        props.Value = false;
+                        props.Albino = false;
                     }
                 }
             }
         }
-        else if (type == Tp.TentaclePlant || type == TpSH.StowawayBug)
+        else if (type == Tp.TentaclePlant)
+        {
+            rand = Random.value;
+            if (rand < .25f)
+            {
+                res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.Denture), null, res.pos, res.ID);
+                res.setCustomFlags();
+                res.superSizeMe = true;
+                if (AbsProps.TryGetValue(res, out var props))
+                    props.Albino = Random.value < .3f;
+            }
+            else if (rand < .75f && AbsProps.TryGetValue(res, out var props))
+                props.RottenMode = true;
+        }
+        else if (type == TpSH.StowawayBug)
         {
             if (Random.value < .5f)
             {
                 res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.Denture), null, res.pos, res.ID);
                 res.setCustomFlags();
                 res.superSizeMe = true;
-                if (Albino.TryGetValue(res, out var props))
-                    props.Value = Random.value < .3f;
+                if (AbsProps.TryGetValue(res, out var props))
+                    props.Albino = Random.value < .3f;
             }
         }
         else if (type == Tp.SeaLeech || type == TpSH.JungleLeech)
@@ -503,28 +522,28 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             {
                 res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.FatFireFly), null, res.pos, res.ID);
                 res.setCustomFlags();
-                if (Albino.TryGetValue(res, out var props))
+                if (AbsProps.TryGetValue(res, out var props))
                 {
                     var rnd = Random.value;
                     if (rnd < .25f)
                     {
                         res.superSizeMe = true;
-                        props.Value = true;
+                        props.Albino = true;
                     }
                     else if (rnd < .5f)
                     {
                         res.superSizeMe = true;
-                        props.Value = false;
+                        props.Albino = false;
                     }
                     else if (rnd < .75f)
                     {
                         res.superSizeMe = false;
-                        props.Value = true;
+                        props.Albino = true;
                     }
                     else
                     {
                         res.superSizeMe = false;
-                        props.Value = false;
+                        props.Albino = false;
                     }
                 }
             }
@@ -536,23 +555,23 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             {
                 res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.Glowpillar), null, res.pos, res.ID);
                 res.setCustomFlags();
-                if (Albino.TryGetValue(res, out var props))
+                if (AbsProps.TryGetValue(res, out var props))
                 {
                     var rnd = Random.value;
                     if (rnd < 1 / 3f)
                     {
                         res.superSizeMe = false;
-                        props.Value = true;
+                        props.Albino = true;
                     }
                     else if (rnd < 2 / 3f)
                     {
                         res.superSizeMe = true;
-                        props.Value = false;
+                        props.Albino = false;
                     }
                     else
                     {
                         res.superSizeMe = false;
-                        props.Value = false;
+                        props.Albino = false;
                     }
                 }
             }
@@ -572,8 +591,8 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
                 res.setCustomFlags();
                 res.superSizeMe = Random.value < .5f;
             }
-            else if (rand < 2f / 3f && Albino.TryGetValue(res, out var props))
-                props.Value = true;
+            else if (rand < 2f / 3f && AbsProps.TryGetValue(res, out var props))
+                props.Albino = true;
         }
         else if (type == Tp.CicadaA || type == Tp.CicadaB)
         {
@@ -584,6 +603,7 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
                 {
                     res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.Hoverfly), null, res.pos, res.ID);
                     res.setCustomFlags();
+                    res.superSizeMe = Random.value < .5f;
                 }
                 else if (rand < .6f)
                 {
@@ -597,6 +617,7 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
                 {
                     res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.Hoverfly), null, res.pos, res.ID);
                     res.setCustomFlags();
+                    res.superSizeMe = Random.value < .5f;
                 }
             }
         }
