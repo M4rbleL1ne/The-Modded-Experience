@@ -18,7 +18,7 @@ using System.Security;
 
 namespace TheModdedExperience;
 
-[BepInPlugin("lb-fgf-m4r-ik.the-modded-experience", "The Modded Experience", "10.0.0"),
+[BepInPlugin("lb-fgf-m4r-ik.the-modded-experience", "The Modded Experience", "10.0.1"),
 	BepInDependency("lb-fgf-m4r-ik.modpack"),
 	BepInDependency("com.rainworldgame.shroudedassembly.plugin")]
 public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
@@ -109,8 +109,11 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             return type;
         if (type == Tp.MirosBird)
         {
-            if (Random.value < .5f)
+            rand = Random.value;
+            if (rand < 1f / 3f)
                 type = Tp1.Blizzor;
+            else if (rand < 2f / 3f)
+                type = Tp1.SparkEye;
         }
         else if (type == Tp.Snail)
         {
@@ -323,6 +326,16 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             if (Random.value < .4f)
                 type = Tp1.SilverLizard;
         }
+        else if (type == Tp.Scavenger)
+        {
+            if (Random.value < .25f)
+                type = Tp1.ScavengerSentinel;
+        }
+        else if (type == TpSH.ScavengerElite)
+        {
+            if (Random.value < .5f)
+                type = Tp1.ScavengerSentinel;
+        }
         return type;
     }
 
@@ -366,9 +379,15 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
         }
         else if (type == Tp.MirosBird)
         {
-            if (Random.value < .5f)
+            rand = Random.value;
+            if (rand < 1f / 3f)
             {
                 res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.Blizzor), null, res.pos, res.ID);
+                res.setCustomFlags();
+            }
+            else if (rand < 2f / 3f)
+            {
+                res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.SparkEye), null, res.pos, res.ID);
                 res.setCustomFlags();
             }
         }
@@ -840,6 +859,22 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             if (Random.value < .4f)
             {
                 res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.SilverLizard), null, res.pos, res.ID);
+                res.setCustomFlags();
+            }
+        }
+        else if (type == Tp.Scavenger)
+        {
+            if (Random.value < .25f)
+            {
+                res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.ScavengerSentinel), null, res.pos, res.ID);
+                res.setCustomFlags();
+            }
+        }
+        else if (type == TpSH.ScavengerElite)
+        {
+            if (Random.value < .5f)
+            {
+                res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.ScavengerSentinel), null, res.pos, res.ID);
                 res.setCustomFlags();
             }
         }

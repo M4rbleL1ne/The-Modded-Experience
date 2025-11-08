@@ -1,7 +1,7 @@
 {
   "id": "lb-fgf-m4r-ik.the-modded-experience",
   "name": "The Modded Experience",
-  "version": "10.0.0",
+  "version": "10.0.1",
   "authors": "M4rbleL1ne",
   "description": "Most creatures in the game have a chance to be replaced by modded creatures.",
   "requirements": [ "lb-fgf-m4r-ik.modpack", "com.rainworldgame.shroudedassembly.plugin" ],
