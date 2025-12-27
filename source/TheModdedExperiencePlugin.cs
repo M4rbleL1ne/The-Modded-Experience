@@ -18,7 +18,7 @@ using System.Security;
 
 namespace TheModdedExperience;
 
-[BepInPlugin("lb-fgf-m4r-ik.the-modded-experience", "The Modded Experience", "10.0.1"),
+[BepInPlugin("lb-fgf-m4r-ik.the-modded-experience", "The Modded Experience", "10.0.2"),
 	BepInDependency("lb-fgf-m4r-ik.modpack"),
 	BepInDependency("com.rainworldgame.shroudedassembly.plugin")]
 public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
@@ -308,13 +308,23 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
             else if (rand < .385f)
                 type = Tp1.NoodleEater;
         }
-        else if (type == Tp.EggBug || type == TpM.FireBug)
+        else if (type == TpM.FireBug)
         {
             rand = Random.value;
             if (rand < 1f / 3f)
-                type = type == TpM.FireBug ? Tp1.ThornBug : Tp1.SurfaceSwimmer;
+                type = Tp1.ThornBug;
             else if (rand < 2f / 3f)
                 type = Tp1.TintedBeetle;
+        }
+        else if (type == Tp.EggBug)
+        {
+            rand = Random.value;
+            if (rand < .3f)
+                type = Tp1.SurfaceSwimmer;
+            else if (rand < .55f)
+                type = Tp1.TintedBeetle;
+            else if (rand < .9f)
+                type = Tp1.MamaBug;
         }
         else if (type == Tp.DropBug)
         {
@@ -830,12 +840,12 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
                 res.superSizeMe = false;
             }
         }
-        else if (type == Tp.EggBug || type == TpM.FireBug)
+        else if (type == TpM.FireBug)
         {
             rand = Random.value;
             if (rand < 1f / 3f)
             {
-                res = new(res.world, StaticWorld.GetCreatureTemplate(type == TpM.FireBug ? Tp1.ThornBug : Tp1.SurfaceSwimmer), null, res.pos, res.ID);
+                res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.ThornBug), null, res.pos, res.ID);
                 res.setCustomFlags();
             }
             else if (rand < 2f / 3f)
@@ -843,6 +853,26 @@ public sealed class TheModdedExperiencePlugin : BaseUnityPlugin
                 res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.TintedBeetle), null, res.pos, res.ID);
                 res.setCustomFlags();
                 res.superSizeMe = Random.value < .5f;
+            }
+        }
+        else if (type == Tp.EggBug)
+        {
+            rand = Random.value;
+            if (rand < .3f)
+            {
+                res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.SurfaceSwimmer), null, res.pos, res.ID);
+                res.setCustomFlags();
+            }
+            else if (rand < .55f)
+            {
+                res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.TintedBeetle), null, res.pos, res.ID);
+                res.setCustomFlags();
+                res.superSizeMe = Random.value < .5f;
+            }
+            else if (rand < .9f)
+            {
+                res = new(res.world, StaticWorld.GetCreatureTemplate(Tp1.MamaBug), null, res.pos, res.ID);
+                res.setCustomFlags();
             }
         }
         else if (type == Tp.DropBug)
